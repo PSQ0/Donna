@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Birthday Trading Challenge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            position: fixed;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ffe9f0 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Floating Trading Elements - MUCH more visible with stronger shadow and size */
+        .trading-element {
+            position: absolute;
+            font-size: 45px;
+            opacity: 0.85;
+            pointer-events: none;
+            filter: drop-shadow(0 5px 25px rgba(255, 107, 157, 0.7));
+            will-change: transform;
+            z-index: 5;
+        }
+
+        /* Simplified animations for better mobile performance */
+        @media (prefers-reduced-motion: no-preference) {
+            .trading-element {
+                animation: float linear infinite;
+            }
+            
+            @keyframes float {
+                0% {
+                    transform: translateY(100vh) rotate(0deg);
+                }
+                100% {
+                    transform: translateY(-100vh) rotate(180deg);
+                }
+            }
+
+            @keyframes floatHorizontal {
+                0% {
+                    transform: translateX(-100vw) rotate(0deg);
+                }
+                100% {
+                    transform: translateX(100vw) rotate(180deg);
+                }
+            }
+        }
+
+        /* Disable animations on low-end devices */
+        @media (max-width: 768px) {
+            .trading-element {
+                animation-duration: 25s !important;
+                opacity: 0.75;
+                font-size: 38px;
+            }
+        }
+
+        .candle-bull {
+            animation: float 20s linear infinite;
+        }
+
+        .candle-bear {
+            animation: float 23s linear infinite;
+        }
+
+        .chart-icon-float {
+            animation: floatHorizontal 25s linear infinite;
+        }
+
+        /* LESS transparent glassmorphism - more see-through for icons */
+        .container {
+            max-width: 700px;
+            width: 100%;
+            max-height: 95vh;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px) saturate(150%);
+            -webkit-backdrop-filter: blur(15px) saturate(150%);
+            border-radius: 30px;
+            padding: 30px 25px;
+            box-shadow: 
+                0 8px 32px 0 rgba(255, 107, 157, 0.15),
+                inset 0 2px 4px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -2px 4px 0 rgba(255, 182, 193, 0.05);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            position: relative;
+            z-index: 10;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .chart-icon {
+            text-align: center;
+            font-size: 60px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 8px 15px rgba(255, 182, 193, 0.3));
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .chart-icon {
+                animation: bounce 2s ease-in-out infinite;
+            }
+            
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff6b9d;
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 1.8em;
+            text-shadow: 0 2px 10px rgba(255, 107, 157, 0.2);
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1em;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        .quiz-container {
+            position: relative;
+            min-height: 340px;
+        }
+
+        /* LESS transparent question cards */
+        .question-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px) saturate(140%);
+            -webkit-backdrop-filter: blur(12px) saturate(140%);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 8px 32px rgba(255, 107, 157, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .question-card:hover {
+            box-shadow: 
+                0 15px 40px rgba(255, 107, 157, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.45);
+        }
+
+        .question-number {
+            color: #ff6b9d;
+            font-weight: 600;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            display: inline-block;
+            background: rgba(255, 182, 193, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 0;
+        }
+
+        /* LESS transparent options */
+        .option {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px) saturate(130%);
+            -webkit-backdrop-filter: blur(10px) saturate(130%);
+            border: 1.5px solid rgba(255, 182, 193, 0.3);
+            border-radius: 15px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95em;
+            color: #555;
+            position: relative;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            box-shadow: 
+                0 4px 15px rgba(255, 182, 193, 0.08),
+                inset 0 1px 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 182, 193, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .option:hover::before {
+                left: 100%;
+            }
+
+            .option:hover {
+                background: rgba(255, 239, 244, 0.5);
+                backdrop-filter: blur(12px) saturate(140%);
+                -webkit-backdrop-filter: blur(12px) saturate(140%);
+                border-color: rgba(255, 107, 157, 0.5);
+                transform: scale(1.02);
+                color: #ff6b9d;
+                box-shadow: 
+                    0 8px 25px rgba(255, 107, 157, 0.15),
+                    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        .option:active {
+            transform: scale(0.98);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.85) 0%, rgba(255, 143, 179, 0.85) 100%);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border-color: rgba(255, 107, 157, 0.8);
+            color: white;
+            font-weight: 600;
+            box-shadow: 
+                0 10px 30px rgba(255, 107, 157, 0.4),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fb3 100%);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+            position: relative;
+            z-index: 100;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(255, 107, 157, 0.5);
+            }
+
+            .btn:active {
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 182, 193, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b9d 0%, #ff8fb3 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .result-card {
+            text-align: center;
+            padding: 15px 10px;
+        }
+
+        .result-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .result-icon {
+                animation: bounce 1s infinite;
+            }
+        }
+
+        .result-title {
+            font-size: 1.8em;
+            color: #ff6b9d;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 0 2px 15px rgba(255, 107, 157, 0.3);
+            line-height: 1.3;
+        }
+
+        /* LESS transparent result stats */
+        .result-stats {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px) saturate(140%);
+            -webkit-backdrop-filter: blur(12px) saturate(140%);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 
+                0 8px 32px rgba(255, 107, 157, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 182, 193, 0.2);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .stat-value {
+            color: #ff6b9d;
+            font-weight: 600;
+            font-size: 1em;
+            text-align: right;
+        }
+
+        .candle-emoji {
+            display: inline-block;
+            margin: 0 3px;
+        }
+
+        /* Custom slide animations for questions - optimized */
+        .slide-out-left {
+            animation: slideOutLeft 0.4s ease-in-out forwards;
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.4s ease-in-out forwards;
+        }
+
+        @keyframes slideOutLeft {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Button container - reduced height */
+        .button-container {
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .btn.hidden {
+            display: block !important;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .btn.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Confetti animation */
+        @keyframes fall {
+            to {
+                top: 100vh;
+                transform: translateX(var(--x-offset)) rotate(var(--rotation));
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            animation: fall linear forwards;
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px 15px;
+                border-radius: 20px;
+                max-height: 100vh;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(12px) saturate(140%);
+                -webkit-backdrop-filter: blur(12px) saturate(140%);
+            }
+
+            .trading-element {
+                font-size: 35px;
+                opacity: 0.75;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+            }
+
+            .chart-icon {
+                font-size: 50px;
+                margin-bottom: 10px;
+            }
+            
+            .subtitle {
+                font-size: 0.9em;
+                margin-bottom: 20px;
+                padding: 0 5px;
+            }
+
+            .quiz-container {
+                min-height: 320px;
+            }
+
+            .question-card {
+                padding: 15px;
+            }
+
+            .question-text {
+                font-size: 1.05em;
+                margin-bottom: 12px;
+            }
+
+            .option {
+                padding: 11px 14px;
+                font-size: 0.9em;
+            }
+
+            .btn {
+                padding: 12px 30px;
+                font-size: 0.95em;
+            }
+
+            .result-icon {
+                font-size: 60px;
+                margin-bottom: 12px;
+            }
+
+            .result-title {
+                font-size: 1.6em;
+                margin-bottom: 12px;
+            }
+
+            .result-stats {
+                padding: 15px;
+                margin: 12px 0;
+            }
+
+            .stat-label {
+                font-size: 0.85em;
+            }
+
+            .stat-value {
+                font-size: 0.95em;
+            }
+
+            .button-container {
+                height: 50px;
+                margin-top: 10px;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.3em;
+            }
+
+            .question-text {
+                font-size: 0.95em;
+            }
+
+            .option {
+                font-size: 0.85em;
+                padding: 10px 12px;
+            }
+        }
+
+        /* Landscape mobile optimization */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container {
+                padding: 15px 20px;
+                max-height: 95vh;
+            }
+
+            .chart-icon {
+                font-size: 40px;
+                margin-bottom: 8px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+                margin-bottom: 8px;
+            }
+
+            .subtitle {
+                font-size: 0.85em;
+                margin-bottom: 15px;
+            }
+
+            .quiz-container {
+                min-height: 280px;
+            }
+
+            .question-card {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Trading Elements Background -->
+    <div id="trading-elements"></div>
+
+    <div class="container">
+        <div class="content">
+            <!-- Welcome Page -->
+            <div id="welcome-page" class="animate__animated animate__fadeIn">
+                <div class="chart-icon">📈</div>
+                <h1>Welcome to the Birthday Trading Challenge!</h1>
+                <p class="subtitle">Today's market is full of surprises… but your biggest breakout is not in BTC or Gold — it's in celebrating you.</p>
+                <button class="btn animate__animated animate__pulse animate__infinite" onclick="startQuiz()">Start Trading 🚀</button>
+            </div>
+
+            <!-- Quiz Pages -->
+            <div id="quiz-page" class="hidden">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress" style="width: 0%"></div>
+                </div>
+
+                <div class="quiz-container">
+                    <!-- Question 1 -->
+                    <div id="q1" class="question-card hidden">
+                        <span class="question-number">Question 1 – Warm-up Trade</span>
+                        <h2 class="question-text">What's the best time to start trading?</h2>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 1)">
+                                <span class="candle-emoji">🕯️</span> When the candles are green
+                            </div>
+                            <div class="option" onclick="selectOption(this, 1)">
+                                <span class="candle-emoji">🎂</span> When the market is red but it's my birthday
+                            </div>
+                            <div class="option" onclick="selectOption(this, 1)">
+                                <span class="candle-emoji">☕</span> Whenever the coffee is ready
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div id="q2" class="question-card hidden">
+                        <span class="question-number">Question 2 – Risk Management</span>
+                        <h2 class="question-text">What's the maximum risk percentage for each birthday trade?</h2>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 2)">
+                                <span class="candle-emoji">📊</span> 2% like a pro
+                            </div>
+                            <div class="option" onclick="selectOption(this, 2)">
+                                <span class="candle-emoji">🎉</span> 100% because today is special!
+                            </div>
+                            <div class="option" onclick="selectOption(this, 2)">
+                                <span class="candle-emoji">🚫</span> I don't use Stop Loss, even in life
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div id="q3" class="question-card hidden">
+                        <span class="question-number">Question 3 – Technical Analysis</span>
+                        <h2 class="question-text">Looking at your life's chart today, what pattern do you see?</h2>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 3)">
+                                <span class="candle-emoji">😊</span> Double Top of Happiness
+                            </div>
+                            <div class="option" onclick="selectOption(this, 3)">
+                                <span class="candle-emoji">❤️</span> Bull Flag of Love
+                            </div>
+                            <div class="option" onclick="selectOption(this, 3)">
+                                <span class="candle-emoji">✨</span> Golden Birthday Cross
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div id="q4" class="question-card hidden">
+                        <span class="question-number">Question 4 – Fundamental News</span>
+                        <h2 class="question-text">What's today's most important news?</h2>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 4)">
+                                <span class="candle-emoji">🏦</span> The FED changed rates
+                            </div>
+                            <div class="option" onclick="selectOption(this, 4)">
+                                <span class="candle-emoji">🚀</span> BTC went to the moon
+                            </div>
+                            <div class="option" onclick="selectOption(this, 4)">
+                                <span class="candle-emoji">🌟</span> A legendary trader was born today
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div id="q5" class="question-card hidden">
+                        <span class="question-number">Question 5 – Final Trade Decision</span>
+                        <h2 ="question-text">If you open a position today, what will it be?</h2>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 5)">
+                                <span class="candle-emoji">📈</span> Long Happiness
+                            </div>
+                            <div class="option" onclick="selectOption(this, 5)">
+                                <span class="candle-emoji">📉</span> Short Boredom
+                            </div>
+                            <div class="option" onclick="selectOption(this, 5)">
+                                <span class="candle-emoji">💎</span> Hold Memories Forever
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <button class="btn hidden" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+                </div>
+            </div>
+
+            <!-- Result Page -->
+            <div id="result-page" class="hidden result-card animate__animated">
+                <div class="result-icon">🎉</div>
+                <h1 class="result-title">Congratulations!</h1>
+                <p class="subtitle">You've completed the Birthday Trading Challenge.</p>
+                
+                <div class="result-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Your P/L today:</span>
+                        <span class="stat-value">Infinite Happiness 💚</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Position Status:</span>
+                        <span class="stat-value">Closed at ATH ✨</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Achievement:</span>
+                        <span class="stat-value">All-Time Happiness 🚀</span>
+                    </div>
+                </div>
+
+                <p class="subtitle" style="margin-top: 20px; font-size: 1.1em; color: #ff6b9d; font-weight: 600;">
+                    Happy Birthday Donna! 🎂<br>
+                    The market may move, but you'll always be my favorite breakout. 💖
+                </p>
+
+                <button class="btn" onclick="restartQuiz()">Trade Again 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 5;
+
+        // Detect if device is mobile for performance optimization
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isLowPerformance = isMobile || navigator.hardwareConcurrency < 4;
+
+        // Create floating trading elements (reduced for mobile)
+        function createFloatingElements() {
+            const elementCount = isLowPerformance ? 14 : 18;
+            const elements = [
+                { emoji: '📊', type: 'chart' },
+                { emoji: '📈', type: 'bull' },
+                { emoji: '📉', type: 'bear' },
+                { emoji: '💹', type: 'chart' },
+                { emoji: '🐂', type: 'bull' },
+                { emoji: '💰', type: 'chart' },
+                { emoji: '🚀', type: 'bull' },
+                { emoji: '💎', type: 'chart' },
+                { emoji: '♏', type: 'bull' },
+                { emoji: '💸', type: 'bear' },
+                { emoji: '🎯', type: 'chart' },
+                { emoji: '📱', type: 'bull' },
+                { emoji: '💻', type: 'chart' },
+                { emoji: '🐻', type: 'bull' },
+                { emoji: '☄️', type: 'chart' },
+                { emoji: '💵', type: 'bear' },
+                { emoji: '⭐', type: 'chart' },
+                { emoji: '🕯️', type: 'bull' }
+            ];
+
+            const container = document.getElementById('trading-elements');
+            
+            for (let i = 0; i < elementCount; i++) {
+                const el = elements[i % elements.length];
+                const div = document.createElement('div');
+                div.className = `trading-element ${el.type === 'bull' ? 'candle-bull' : el.type === 'bear' ? 'candle-bear' : 'chart-icon-float'}`;
+                div.innerHTML = el.emoji;
+                div.style.left = Math.random() * 100 + '%';
+                div.style.top = Math.random() * 100 + 'vh';
+                div.style.animationDelay = Math.random() * 5 + 's';
+                div.style.animationDuration = (20 + Math.random() * 10) + 's';
+                container.appendChild(div);
+            }
+        }
+
+        // Initialize floating elements on load
+        window.onload = function() {
+            createFloatingElements();
+        };
+
+        function startQuiz() {
+            document.getElementById('welcome-page').classList.add('animate__fadeOut');
+            setTimeout(() => {
+                document.getElementById('welcome-page').classList.add('hidden');
+                document.getElementById('quiz-page').classList.remove('hidden');
+                showQuestion(1);
+            }, 500);
+        }
+
+        function showQuestion(questionNum) {
+            const previousQuestion = currentQuestion;
+            currentQuestion = questionNum;
+            
+            // Update progress bar
+            const progress = (questionNum / totalQuestions) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Hide ALL questions first
+            for (let i = 1; i <= totalQuestions; i++) {
+                const q = document.getElementById('q' + i);
+                q.classList.add('hidden');
+                q.classList.remove('slide-out-left', 'slide-in-right');
+            }
+            
+            // Show current question with slide in animation
+            setTimeout(() => {
+                const currentQ = document.getElementById('q' + questionNum);
+                currentQ.classList.remove('hidden');
+                currentQ.classList.add('slide-in-right');
+                
+                setTimeout(() => {
+                    currentQ.classList.remove('slide-in-right');
+                }, 400);
+            }, previousQuestion > 0 ? 100 : 0);
+
+            // Hide next button until option is selected
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.classList.add('hidden');
+            nextBtn.classList.remove('visible');
+        }
+
+        function selectOption(element, questionNum) {
+            // Remove selected class from all options in current question
+            const currentQ = document.getElementById('q' + questionNum);
+            const options = currentQ.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+            
+            // Show next button
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.classList.remove('hidden');
+            nextBtn.classList.add('visible');
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                showQuestion(currentQuestion + 1);
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-page').classList.add('animate__fadeOut');
+            setTimeout(() => {
+                document.getElementById('quiz-page').classList.add('hidden');
+                document.getElementById('quiz-page').classList.remove('animate__fadeOut');
+                document.getElementById('result-page').classList.remove('hidden');
+                document.getElementById('result-page').classList.add('animate__fadeIn');
+                createConfetti();
+            }, 500);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#ff8fb3', '#ffc0cb', '#ffb6c1', '#ff69b4'];
+            const confettiCount = 50;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = -10 + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.setProperty('--x-offset', (Math.random() - 0.5) * 200 + 'px');
+                confetti.style.setProperty('--rotation', Math.random() * 360 + 'deg');
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        function restartQuiz() {
+            // Reset current question counter
+            currentQuestion = 0;
+            
+            // Hide result page
+            document.getElementById('result-page').classList.add('animate__fadeOut');
+            
+            setTimeout(() => {
+                // Hide result and quiz pages
+                document.getElementById('result-page').classList.add('hidden');
+                document.getElementById('result-page').classList.remove('animate__fadeOut', 'animate__fadeIn');
+                document.getElementById('quiz-page').classList.add('hidden');
+                
+                // Show welcome page
+                document.getElementById('welcome-page').classList.remove('hidden', 'animate__fadeOut');
+                document.getElementById('welcome-page').classList.add('animate__fadeIn');
+                
+                // Reset all questions - HIDE them all and remove selected states
+                for (let i = 1; i <= totalQuestions; i++) {
+                    const q = document.getElementById('q' + i);
+                    q.classList.add('hidden');
+                    q.classList.remove('slide-out-left', 'slide-in-right');
+                    const options = q.querySelectorAll('.option');
+                    options.forEach(opt => opt.classList.remove('selected'));
+                }
+                
+                // Reset progress bar
+                document.getElementById('progress').style.width = '0%';
+                
+                // Hide next button
+                const nextBtn = document.getElementById('next-btn');
+                nextBtn.classList.add('hidden');
+                nextBtn.classList.remove('visible');
+            }, 500);
+        }
+    </script>
+</body>
+</html>
