@@ -7,6 +7,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Birthday Trading Challenge</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -604,6 +606,271 @@
                 padding: 12px;
             }
         }
+        /* Magic Star Styles */
+        .magic-star {
+            font-size: 4rem;
+            cursor: pointer;
+            display: inline-block;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+            animation: twinkle 2s ease-in-out infinite;
+            user-select: none;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { 
+                text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700;
+            }
+            50% { 
+                text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ffd700, 0 0 80px #ffd700;
+            }
+        }
+
+        .magic-star.growing {
+            animation: grow 0.5s ease-out forwards;
+        }
+
+        @keyframes grow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3) rotate(180deg); }
+            100% { transform: scale(1.5) rotate(360deg); }
+        }
+
+        .zodiac-container {
+            background: linear-gradient(180deg, #0a0e27 0%, #1a1a3e 50%, #2a2a5e 100%);
+            min-height: 100vh;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .zodiac-container.active {
+            display: flex;
+        }
+
+        .zodiac-page {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            padding: 40px 20px;
+        }
+
+        .zodiac-title {
+            color: #fff;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255, 105, 180, 0.8), 0 0 40px rgba(255, 105, 180, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(255, 105, 180, 1), 0 0 60px rgba(255, 105, 180, 0.7);
+            }
+        }
+
+        .stars-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: starTwinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .zodiac-circle {
+            position: relative;
+            width: 700px;
+            height: 700px;
+            margin: 0 auto;
+            z-index: 1;
+        }
+
+        .sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #ffd700 0%, #ffed4e 50%, #ff8c00 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.8),
+                        0 0 80px rgba(255, 215, 0, 0.5),
+                        0 0 120px rgba(255, 140, 0, 0.3);
+            animation: sunPulse 3s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes sunPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .zodiac-signs {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            animation: rotateZodiac 60s linear infinite;
+        }
+
+        @keyframes rotateZodiac {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .zodiac-sign {
+            position: absolute;
+            font-size: 3.5em;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            transition: filter 0.3s ease, transform 0.3s ease !important;
+            animation: counterRotate 60s linear infinite;
+        }
+
+        @keyframes counterRotate {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(-360deg);
+            }
+        }
+
+        .zodiac-sign:hover {
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1));
+            transform: translate(-50%, -50%) scale(1.3) !important;
+        }
+
+        .zodiac-sign.scorpio {
+            filter: drop-shadow(0 0 20px rgba(255, 105, 180, 1));
+            animation: scorpioGlow 2s ease-in-out infinite, counterRotate 60s linear infinite;
+        }
+
+        @keyframes scorpioGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(255, 105, 180, 1));
+            }
+            50% {
+                filter: drop-shadow(0 0 40px rgba(138, 43, 226, 1));
+            }
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 40px auto 0;
+            box-shadow: 0 8px 20px rgba(106, 90, 205, 0.4);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            z-index: 10;
+            position: relative;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(106, 90, 205, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .container {
+                padding: 25px;
+            }
+
+            .zodiac-circle {
+                width: 350px;
+                height: 350px;
+            }
+
+            .sun {
+                width: 50px;
+                height: 50px;
+            }
+
+            .zodiac-sign {
+                font-size: 2em;
+                width: 40px;
+                height: 40px;
+            }
+
+            .zodiac-title {
+                font-size: 1.5em;
+                margin-bottom: 20px;
+            }
+
+            .zodiac-page {
+                padding: 20px 10px;
+            }
+
+            .magic-star {
+                font-size: 2em;
+            }
+
+            /* .chart {
+                height: 150px;
+            }
+
+            .candle {
+                width: 20px;
+            }
+
+            .particle {
+                font-size: 1em;
+            } */
+        }
     </style>
 </head>
 <body>
@@ -698,7 +965,7 @@
                     <!-- Question 5 -->
                     <div id="q5" class="question-card hidden">
                         <span class="question-number">Question 5 – Final Trade Decision</span>
-                        <h2 ="question-text">If you open a position today, what will it be?</h2>
+                        <h2 class="question-text">If you open a position today, what will it be?</h2>
                         <div class="options">
                             <div class="option" onclick="selectOption(this, 5)">
                                 <span class="candle-emoji">📈</span> Long Happiness
@@ -745,17 +1012,75 @@
                 </p>
 
                 <button class="btn" onclick="restartQuiz()">Trade Again 🔄</button>
+                <div class="magic-star" id="magicStar" onclick="clickStar()">🌟</div>
             </div>
+        </div>
+    </div>
+
+    <div class="zodiac-container" id="zodiacPage">
+        <div class="stars-background" id="starsContainer"></div>
+        
+        <div class="zodiac-page">
+            <h1 class="zodiac-title">✨ Your Celestial Journey ✨</h1>
+            
+            <div class="zodiac-circle">
+                <div class="sun"></div>
+                <div class="zodiac-signs" id="zodiacSigns"></div>
+            </div>
+
+            <p style="color: #fff; text-align: center; font-size: 1.2em; margin-top: 30px;">
+                The stars aligned on your special day, Scorpio ♏ 💜
+            </p>
+
+            <button class="back-btn" onclick="backToMain()">Return to Earth 🌍</button>
         </div>
     </div>
 
     <script>
         let currentQuestion = 0;
         const totalQuestions = 5;
+        let starClicks = 0;
 
         // Detect if device is mobile for performance optimization
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isLowPerformance = isMobile || navigator.hardwareConcurrency < 4;
+
+        // Play celebration sound
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playCelebrationSound() {
+            const now = audioContext.currentTime;
+            
+            const osc1 = audioContext.createOscillator();
+            const gain1 = audioContext.createGain();
+            osc1.connect(gain1);
+            gain1.connect(audioContext.destination);
+            osc1.frequency.value = 523.25;
+            gain1.gain.setValueAtTime(0.3, now);
+            gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            osc1.start(now);
+            osc1.stop(now + 0.5);
+
+            const osc2 = audioContext.createOscillator();
+            const gain2 = audioContext.createGain();
+            osc2.connect(gain2);
+            gain2.connect(audioContext.destination);
+            osc2.frequency.value = 659.25;
+            gain2.gain.setValueAtTime(0.3, now + 0.15);
+            gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
+            osc2.start(now + 0.15);
+            osc2.stop(now + 0.65);
+
+            const osc3 = audioContext.createOscillator();
+            const gain3 = audioContext.createGain();
+            osc3.connect(gain3);
+            gain3.connect(audioContext.destination);
+            osc3.frequency.value = 783.99;
+            gain3.gain.setValueAtTime(0.3, now + 0.3);
+            gain3.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+            osc3.start(now + 0.3);
+            osc3.stop(now + 0.8);
+        }
 
         // Create floating trading elements (reduced for mobile)
         function createFloatingElements() {
@@ -874,6 +1199,7 @@
                 document.getElementById('result-page').classList.add('animate__fadeIn');
                 createConfetti();
             }, 500);
+            setTimeout(() => playCelebrationSound(), 300);
         }
 
         function createConfetti() {
@@ -935,6 +1261,97 @@
                 nextBtn.classList.add('hidden');
                 nextBtn.classList.remove('visible');
             }, 500);
+        }
+
+        function generateZodiacPage() {
+            const starsContainer = document.getElementById('starsContainer');
+            starsContainer.innerHTML = '';
+            
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+
+            const zodiacSigns = [
+                { emoji: '♈', name: 'Aries' },
+                { emoji: '♉', name: 'Taurus' },
+                { emoji: '♊', name: 'Gemini' },
+                { emoji: '♋', name: 'Cancer' },
+                { emoji: '♌', name: 'Leo' },
+                { emoji: '♍', name: 'Virgo' },
+                { emoji: '♎', name: 'Libra' },
+                { emoji: '♏', name: 'Scorpio' },
+                { emoji: '♐', name: 'Sagittarius' },
+                { emoji: '♑', name: 'Capricorn' },
+                { emoji: '♒', name: 'Aquarius' },
+                { emoji: '♓', name: 'Pisces' }
+            ];
+
+            const zodiacSignsContainer = document.getElementById('zodiacSigns');
+            zodiacSignsContainer.innerHTML = '';
+
+            const isMobile = window.innerWidth <= 768;
+            const radius = isMobile ? 135 : 300;
+
+            zodiacSigns.forEach((sign, index) => {
+                const angle = (index * 30) - 90;
+                const radian = angle * (Math.PI / 180);
+                
+                const x = radius * Math.cos(radian);
+                const y = radius * Math.sin(radian);
+
+                const signElement = document.createElement('div');
+                signElement.className = 'zodiac-sign';
+                if (sign.name === 'Scorpio') {
+                    signElement.classList.add('scorpio');
+                }
+                signElement.innerHTML = sign.emoji;
+                
+                signElement.style.left = `calc(50% + ${x}px)`;
+                signElement.style.top = `calc(50% + ${y}px)`;
+                
+                zodiacSignsContainer.appendChild(signElement);
+            });
+        }
+
+        // Magic Star Functionality
+        function clickStar() {
+            const star = document.getElementById('magicStar');
+            starClicks++;
+            
+            // Grow the star
+            const scale = 1 + (starClicks * 0.3);
+            star.style.transform = `scale(${scale})`;
+            
+            // After 5 clicks, trigger magic transition
+            if (starClicks >= 5) {
+                star.classList.add('growing');
+                setTimeout(() => {
+                    showZodiacPage();
+                }, 500);
+            }
+        }
+
+        function showZodiacPage() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('zodiacPage').classList.add('active');
+            generateZodiacPage();
+        }
+
+        function backToMain() {
+            // Hide zodiac page
+            document.getElementById('zodiacPage').classList.remove('active');
+            document.querySelector('.container').style.display = 'block';
+            
+            // Reset star clicks
+            starClicks = 0;
+            const star = document.getElementById('magicStar');
+            star.style.transform = 'scale(1)';
+            star.classList.remove('growing');
         }
     </script>
 </body>
