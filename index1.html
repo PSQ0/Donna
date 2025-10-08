@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Birthday Trading Challenge</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            position: fixed;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ffe9f0 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+            user-select: none;   /* Disable txt selection */
+            -webkit-user-select: none; /* WebKit */
+            -moz-user-select: none;    /*Firefox */
+            -ms-user-select: none;     /*IE/Edge*/
+        }
+
+        /* Floating Trading Elements */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            font-size: 1.5em;
+            opacity: 0.8;
+            animation: floatParticle 10s linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) translateX(0) ;
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) translateX(var(--drift)) ;
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            max-height: 95vh;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px) saturate(150%);
+            -webkit-backdrop-filter: blur(15px) saturate(150%);
+            border-radius: 30px;
+            padding: 30px 25px;
+            box-shadow: 
+                0 8px 32px 0 rgba(255, 107, 157, 0.15),
+                inset 0 2px 4px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -2px 4px 0 rgba(255, 182, 193, 0.05);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            position: relative;
+            z-index: 10;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .chart-icon {
+            text-align: center;
+            font-size: 60px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 8px 15px rgba(255, 182, 193, 0.3));
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .chart-icon {
+                animation: bounce 2s ease-in-out infinite;
+            }
+            
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff6b9d;
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 1.8em;
+            text-shadow: 0 2px 10px rgba(255, 107, 157, 0.2);
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1em;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        .quiz-container {
+            position: relative;
+            min-height: 340px;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px) saturate(140%);
+            -webkit-backdrop-filter: blur(12px) saturate(140%);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 8px 32px rgba(255, 107, 157, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .question-card:hover {
+            box-shadow: 
+                0 15px 40px rgba(255, 107, 157, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.45);
+        }
+
+        .question-number {
+            color: #ff6b9d;
+            font-weight: 600;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            display: inline-block;
+            background: rgba(255, 182, 193, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 0;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px) saturate(130%);
+            -webkit-backdrop-filter: blur(10px) saturate(130%);
+            border: 1.5px solid rgba(255, 182, 193, 0.3);
+            border-radius: 15px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95em;
+            color: #555;
+            position: relative;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            box-shadow: 
+                0 4px 15px rgba(255, 182, 193, 0.08),
+                inset 0 1px 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 182, 193, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .option:hover::before {
+                left: 100%;
+            }
+
+            .option:hover {
+                background: rgba(255, 239, 244, 0.5);
+                backdrop-filter: blur(12px) saturate(140%);
+                -webkit-backdrop-filter: blur(12px) saturate(140%);
+                border-color: rgba(255, 107, 157, 0.5);
+                transform: scale(1.02);
+                color: #ff6b9d;
+                box-shadow: 
+                    0 8px 25px rgba(255, 107, 157, 0.15),
+                    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        .option:active {
+            transform: scale(0.98);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.85) 0%, rgba(255, 143, 179, 0.85) 100%);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border-color: rgba(255, 107, 157, 0.8);
+            color: white;
+            font-weight: 600;
+            box-shadow: 
+                0 10px 30px rgba(255, 107, 157, 0.4),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fb3 100%);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+            position: relative;
+            z-index: 100;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(255, 107, 157, 0.5);
+            }
+
+            .btn:active {
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 182, 193, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b9d 0%, #ff8fb3 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .result-card {
+            inset: 0;
+            overflow: hidden;
+            z-index: 9999;
+            text-align: center;
+            padding: 15px 10px;
+        }
+
+        .result-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .result-icon {
+                animation: bounce 1s infinite;
+            }
+        }
+
+        .result-title {
+            font-size: 1.8em;
+            color: #ff6b9d;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 0 2px 15px rgba(255, 107, 157, 0.3);
+            line-height: 1.3;
+        }
+
+        .result-stats {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px) saturate(140%);
+            -webkit-backdrop-filter: blur(12px) saturate(140%);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 
+                0 8px 32px rgba(255, 107, 157, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 182, 193, 0.2);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .stat-value {
+            color: #ff6b9d;
+            font-weight: 600;
+            font-size: 1em;
+            text-align: right;
+        }
+
+        .candle-emoji {
+            display: inline-block;
+            margin: 0 3px;
+        }
+
+        .slide-out-left {
+            animation: slideOutLeft 0.4s ease-in-out forwards;
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.4s ease-in-out forwards;
+        }
+
+        @keyframes slideOutLeft {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .button-container {
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .btn.hidden {
+            display: block !important;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .btn.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Confetti animation */
+        @keyframes fall {
+            to {
+                top: 100vh;
+                transform: translateX(var(--x-offset)) rotate(var(--rotation));
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            animation: fall linear forwards;
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px 15px;
+                border-radius: 20px;
+                max-height: 100vh;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(12px) saturate(140%);
+                -webkit-backdrop-filter: blur(12px) saturate(140%);
+            }
+
+            .trading-element {
+                font-size: 35px;
+                opacity: 0.75;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+            }
+
+            .chart-icon {
+                font-size: 50px;
+                margin-bottom: 10px;
+            }
+            
+            .subtitle {
+                font-size: 0.9em;
+                margin-bottom: 20px;
+                padding: 0 5px;
+            }
+
+            .quiz-container {
+                min-height: 320px;
+            }
+
+            .question-card {
+                padding: 15px;
+            }
+
+            .question-text {
+                font-size: 1.05em;
+                margin-bottom: 12px;
+            }
+
+            .option {
+                padding: 11px 14px;
+                font-size: 0.9em;
+            }
+
+            .btn {
+                padding: 12px 30px;
+                font-size: 0.95em;
+            }
+
+            .result-icon {
+                font-size: 60px;
+                margin-bottom: 12px;
+            }
+
+            .result-title {
+                font-size: 1.6em;
+                margin-bottom: 12px;
+            }
+
+            .result-stats {
+                padding: 15px;
+                margin: 12px 0;
+            }
+
+            .stat-label {
+                font-size: 0.85em;
+            }
+
+            .stat-value {
+                font-size: 0.95em;
+            }
+
+            .button-container {
+                height: 50px;
+                margin-top: 10px;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.3em;
+            }
+
+            .question-text {
+                font-size: 0.95em;
+            }
+
+            .option {
+                font-size: 0.85em;
+                padding: 10px 12px;
+            }
+        }
+
+        /* Landscape mobile optimization */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container {
+                padding: 15px 20px;
+                max-height: 95vh;
+            }
+
+            .chart-icon {
+                font-size: 40px;
+                margin-bottom: 8px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+                margin-bottom: 8px;
+            }
+
+            .subtitle {
+                font-size: 0.85em;
+                margin-bottom: 15px;
+            }
+
+            .quiz-container {
+                min-height: 280px;
+            }
+
+            .question-card {
+                padding: 12px;
+            }
+        }
+        /* Magic Star Styles */
+        .magic-star {
+            font-size: 4rem;
+            cursor: pointer;
+            display: inline-block;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+            animation: super-glow 2s ease-in-out infinite;
+            user-select: none;
+        }
+
+        @keyframes super-glow {
+             0%, 100% { 
+                filter: drop-shadow(0 0 10px #ffe600) brightness(1.2);
+            }
+            50% { 
+                filter: drop-shadow(0 0 30px #3f0064) brightness(0.95);
+            }
+        }
+
+        .magic-star.growing {
+            animation: grow 0.5s ease-out forwards;
+        }
+
+        @keyframes grow {
+            0% { transform: scale(2.5); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+        
+        /* --  portal */
+
+        .overlay-portal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+        .portal-circle {
+            position: absolute;
+            top: 77%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            margin-left: -100px;
+            margin-top: -100px;
+            border-radius: 50%;
+            /* background: radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,255,255,0.6) 40%, transparent 70%); */
+            background: radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,255,255,0.8) 30%, rgba(255,215,0, 0.5) 60%, transparent 70%);
+            animation: circle-expand 1.5s ease-out forwards;
+            box-shadow: 0 0 30px #ffd700, 0 0 60px #fff, 0 0 100px #fff;
+        }
+
+        @keyframes circle-expand {
+            0% {
+                transform: scale(0.1);
+                opacity: 1;
+            }
+            60% {
+                transform: scale(3);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(8);
+                opacity: 0;
+            }
+        }
+
+        .star-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff, 0 0 20px #ffd700;
+            animation: particle-fly 1.5s ease-out forwards;
+        }
+
+        @keyframes particle-fly {
+            to {
+                transform: translate(var(--tx), var(--ty)) scale(0.5);
+                opacity: 0;
+            }
+        }
+        /* -- end of portal */
+
+        .zodiac-container {
+            background: linear-gradient(180deg, #0a0e27 0%, #1a1a3e 50%, #2a2a5e 100%);
+            min-height: 100vh;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .zodiac-container.active {
+            display: flex;
+            animation: magicReveal 1s ease-out;
+        }
+
+        @keyframes magicReveal {
+            0% { 
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .zodiac-page {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            padding: 40px 20px;
+        }
+
+        .zodiac-title {
+            color: #fff;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255, 105, 180, 0.8), 0 0 40px rgba(255, 105, 180, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(255, 105, 180, 1), 0 0 60px rgba(255, 105, 180, 0.7);
+            }
+        }
+
+        .stars-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: starTwinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .zodiac-circle {
+            position: relative;
+            width: 700px;
+            height: 700px;
+            margin: 0 auto;
+            z-index: 1;
+        }
+
+        .sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #ffd700 0%, #ffed4e 50%, #ff8c00 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.8),
+                        0 0 80px rgba(255, 215, 0, 0.5),
+                        0 0 120px rgba(255, 140, 0, 0.3);
+            animation: sunPulse 3s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes sunPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .zodiac-signs {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            animation: rotateZodiac 60s linear infinite;
+        }
+
+        @keyframes rotateZodiac {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .zodiac-sign {
+            position: absolute;
+            font-size: 3.5em;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0.5));
+            transition: filter 0.3s ease, transform 0.3s ease !important;
+            animation: counterRotate 60s linear infinite;
+        }
+
+        @keyframes counterRotate {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(-360deg);
+            }
+        }
+
+        .zodiac-sign:hover {
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1));
+            transform: translate(-50%, -50%) scale(1.3) !important;
+        }
+
+        .zodiac-sign.scorpio {
+            filter: drop-shadow(0 0 20px rgba(255, 105, 180, 1));
+            animation: scorpioShine 2s ease-in-out infinite, counterRotate 60s linear infinite;
+        }
+
+        @keyframes scorpioShine {
+            0%, 100% { 
+                filter: drop-shadow(0 0 10px #ff0080) brightness(1);
+            }
+            30% { 
+                filter: drop-shadow(0 0 30px #ffffff) brightness(1.5);
+            }
+        }
+
+        .back-btn {
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 40px auto 0;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            z-index: 10;
+            position: relative;
+
+            box-shadow: 
+                0 8px 32px rgba(255, 107, 157, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(5px) saturate(140%);
+            -webkit-backdrop-filter: blur(5px) saturate(140%);
+            border-color: rgba(255, 255, 255, 0.45);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 12px 30px rgba(106, 90, 205, 0.6),
+                inset 0 1px 2px rgba(255, 255, 255, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .container {
+                padding: 25px;
+            }
+
+            .zodiac-circle {
+                width: 350px;
+                height: 350px;
+            }
+
+            .sun {
+                width: 50px;
+                height: 50px;
+            }
+
+            .zodiac-sign {
+                font-size: 2em;
+                width: 40px;
+                height: 40px;
+            }
+
+            .zodiac-title {
+                font-size: 1.5em;
+                margin-bottom: 20px;
+            }
+
+            .zodiac-page {
+                padding: 20px 10px;
+            }
+
+            .magic-star {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Trading Elements Background -->
+    <div class="particles-container" id="particlesContainer"></div>
+
+    <div class="container">
+        <div class="content">
+            <!-- Welcome Page -->
+            <div id="welcome-page" class="animate__animated animate__fadeIn">
+                <div class="chart-icon">📈</div>
+                <h1>Welcome to the Birthday Trading Challenge!</h1>
+                <p class="subtitle">Today's market is full of surprises… but your biggest breakout is not in BTC or Gold — it's in celebrating you.</p>
+                <button class="btn animate__animated animate__pulse animate__infinite" onclick="startQuiz()">Start Trading 🚀</button>
+            </div>
+
+            <!-- Quiz Pages -->
+            <div id="quiz-page" class="hidden">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress" style="width: 0%"></div>
+                </div>
+
+                <div class="quiz-container">
+                    <!-- Question 1 -->
+                    <div id="q1" class="question-card hidden">
+                        <span class="question-number">Question 1 – Warm-up Trade</span>
+                        <h2 class="question-text">What's the best time to start trading?</h2>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 1)">
+                                <span class="candle-emoji">🕯️</span> When the candles are green
+                            </div>
+                            <div class="option" onclick="selectOption(this, 1)">
+                                <span class="candle-emoji">🎂</span> When the market is red but it's my birthday
+                            </div>
+                            <div class="option" onclick="selectOption(this, 1)">
+                                <span class="candle-emoji">☕</span> Whenever the coffee is ready
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div id="q2" class="question-card hidden">
+                        <span class="question-number">Question 2 – Risk Management</span>
+                        <h2 class="question-text">What's the maximum risk percentage for each birthday trade?</h2>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 2)">
+                                <span class="candle-emoji">📊</span> 2% like a pro
+                            </div>
+                            <div class="option" onclick="selectOption(this, 2)">
+                                <span class="candle-emoji">🎉</span> 100% because today is special!
+                            </div>
+                            <div class="option" onclick="selectOption(this, 2)">
+                                <span class="candle-emoji">🚫</span> I don't use Stop Loss, even in life
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div id="q3" class="question-card hidden">
+                        <span class="question-number">Question 3 – Technical Analysis</span>
+                        <h2 class="question-text">Looking at your life's chart today, what pattern do you see?</h2>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 3)">
+                                <span class="candle-emoji">😊</span> Double Top of Happiness
+                            </div>
+                            <div class="option" onclick="selectOption(this, 3)">
+                                <span class="candle-emoji">❤️</span> Bull Flag of Love
+                            </div>
+                            <div class="option" onclick="selectOption(this, 3)">
+                                <span class="candle-emoji">✨</span> Golden Birthday Cross
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div id="q4" class="question-card hidden">
+                        <span class="question-number">Question 4 – Fundamental News</span>
+                        <h2 class="question-text">What's today's most important news?</h2>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 4)">
+                                <span class="candle-emoji">🏦</span> The FED changed rates
+                            </div>
+                            <div class="option" onclick="selectOption(this, 4)">
+                                <span class="candle-emoji">🚀</span> BTC went to the moon
+                            </div>
+                            <div class="option" onclick="selectOption(this, 4)">
+                                <span class="candle-emoji">🌟</span> A legendary trader was born today
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div id="q5" class="question-card hidden">
+                        <span class="question-number">Question 5 – Final Trade Decision</span>
+                        <h2 class="question-text">If you open a position today, what will it be?</h2>
+                        <div class="options">
+                            <div class="option" onclick="selectOption(this, 5)">
+                                <span class="candle-emoji">📈</span> Long Happiness
+                            </div>
+                            <div class="option" onclick="selectOption(this, 5)">
+                                <span class="candle-emoji">📉</span> Short Boredom
+                            </div>
+                            <div class="option" onclick="selectOption(this, 5)">
+                                <span class="candle-emoji">💎</span> Hold Memories Forever
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <button class="btn hidden" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+                </div>
+            </div>
+
+            <!-- Result Page -->
+            <div id="result-page" class="hidden result-card animate__animated">
+                <div class="result-icon">🎉</div>
+                <h1 class="result-title">Congratulations!</h1>
+                <p class="subtitle">You've completed the Birthday Trading Challenge.</p>
+                
+                <div class="result-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Your P/L today:</span>
+                        <span class="stat-value">Infinite Happiness 💚</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Position Status:</span>
+                        <span class="stat-value">Closed at ATH ✨</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Achievement:</span>
+                        <span class="stat-value">All-Time Happiness 🚀</span>
+                    </div>
+                </div>
+
+                <p class="subtitle" style="margin-top: 20px; font-size: 1.1em; color: #ff6b9d; font-weight: 600;">
+                    Happy Birthday Donna! 🎂<br>
+                    The market may move, but you'll always be my favorite breakout. 💖
+                </p>
+
+                <button class="btn" onclick="restartQuiz()">Trade Again 🔄</button>
+                <div class="magic-star" id="magicStar" onclick="clickStar()">✨</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="zodiac-container" id="zodiacPage">
+        <div class="stars-background" id="starsContainer"></div>
+        
+        <div class="zodiac-page">
+            <!-- <h1 class="zodiac-title">✨ Your Celestial Journey ✨</h1> -->
+            
+            <div class="zodiac-circle">
+                <div class="sun"></div>
+                <div class="zodiac-signs" id="zodiacSigns"></div>
+            </div>
+
+            <p style="color: #fff; text-align: center; font-size: 1.2em; margin-top: 30px;">
+                The stars aligned on your special day, Scorpio ♏ 💜
+            </p>
+
+            <button class="back-btn" onclick="backToMain()">Return to Earth 🌍</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 5;
+        let starClicks = 0;
+
+        // Detect if device is mobile for performance optimization
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isLowPerformance = isMobile || navigator.hardwareConcurrency < 4;
+
+        document.addEventListener('contextmenu', function(event) {
+        event.preventDefault(); /* Disable right click*/
+    });
+
+        // Play celebration sound
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playCelebrationSound() {
+            const now = audioContext.currentTime;
+            
+            const osc1 = audioContext.createOscillator();
+            const gain1 = audioContext.createGain();
+            osc1.connect(gain1);
+            gain1.connect(audioContext.destination);
+            osc1.frequency.value = 523.25;
+            gain1.gain.setValueAtTime(0.3, now);
+            gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            osc1.start(now);
+            osc1.stop(now + 0.5);
+
+            const osc2 = audioContext.createOscillator();
+            const gain2 = audioContext.createGain();
+            osc2.connect(gain2);
+            gain2.connect(audioContext.destination);
+            osc2.frequency.value = 659.25;
+            gain2.gain.setValueAtTime(0.3, now + 0.15);
+            gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
+            osc2.start(now + 0.15);
+            osc2.stop(now + 0.65);
+
+            const osc3 = audioContext.createOscillator();
+            const gain3 = audioContext.createGain();
+            osc3.connect(gain3);
+            gain3.connect(audioContext.destination);
+            osc3.frequency.value = 783.99;
+            gain3.gain.setValueAtTime(0.3, now + 0.3);
+            gain3.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+            osc3.start(now + 0.3);
+            osc3.stop(now + 0.8);
+        }
+
+        // Create floating trading elements (reduced for mobile)
+        function generateParticles() {
+            const container = document.getElementById('particlesContainer');
+            const particlesBase = ['📉','💰', '📈', '💎', '🚀', '🕯️', '💸', '♏', '✨', '📊', '🎯','🐻','🐂','📱','💻','💵'];
+
+            setInterval(() => {
+                // locate exist symbols on page
+                const existingSymbols = new Set(
+                    Array.from(container.querySelectorAll('.particle'))
+                        .map(p => p.textContent)
+                );
+
+                // Fliter to keep new symbols
+                const availableSymbols = particlesBase.filter(sym => !existingSymbols.has(sym));
+
+                // If all symbols are in page then let choose all of them
+                const choicePool = availableSymbols.length ? availableSymbols : particlesBase;
+
+                // Chose final symbol
+                const symbol = choicePool[Math.floor(Math.random() * choicePool.length)];
+
+                // Create particle
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.innerHTML = symbol;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.setProperty('--drift', (Math.random() * 200 - 100) + 'px');
+                particle.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                particle.style.fontSize = (Math.random() * 1 + 1) + 'em';
+                
+                container.appendChild(particle);
+
+                // Delete after 13s
+                setTimeout(() => {
+                    particle.remove();
+                }, 13000);
+            }, 800);
+        }
+
+            window.addEventListener('load', () => {
+            generateParticles();
+        });
+
+        function startQuiz() {
+            document.getElementById('welcome-page').classList.add('animate__fadeOut');
+            setTimeout(() => {
+                document.getElementById('welcome-page').classList.add('hidden');
+                document.getElementById('quiz-page').classList.remove('hidden');
+                showQuestion(1);
+            }, 500);
+        }
+
+        function showQuestion(questionNum) {
+            const previousQuestion = currentQuestion;
+            currentQuestion = questionNum;
+            
+            // Update progress bar
+            const progress = (questionNum / totalQuestions) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Hide ALL questions first
+            for (let i = 1; i <= totalQuestions; i++) {
+                const q = document.getElementById('q' + i);
+                q.classList.add('hidden');
+                q.classList.remove('slide-out-left', 'slide-in-right');
+            }
+            
+            // Show current question with slide in animation
+            setTimeout(() => {
+                const currentQ = document.getElementById('q' + questionNum);
+                currentQ.classList.remove('hidden');
+                currentQ.classList.add('slide-in-right');
+                
+                setTimeout(() => {
+                    currentQ.classList.remove('slide-in-right');
+                }, 400);
+            }, previousQuestion > 0 ? 100 : 0);
+
+            // Hide next button until option is selected
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.classList.add('hidden');
+            nextBtn.classList.remove('visible');
+        }
+
+        function selectOption(element, questionNum) {
+            // Remove selected class from all options in current question
+            const currentQ = document.getElementById('q' + questionNum);
+            const options = currentQ.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+            
+            // Show next button
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.classList.remove('hidden');
+            nextBtn.classList.add('visible');
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                showQuestion(currentQuestion + 1);
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-page').classList.add('animate__fadeOut');
+            setTimeout(() => {
+                document.getElementById('quiz-page').classList.add('hidden');
+                document.getElementById('quiz-page').classList.remove('animate__fadeOut');
+                document.getElementById('result-page').classList.remove('hidden');
+                document.getElementById('result-page').classList.add('animate__fadeIn');
+                createConfetti();
+            }, 500);
+            setTimeout(() => playCelebrationSound(), 300);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#ff8fb3', '#ffc0cb', '#ffb6c1', '#ff69b4'];
+            const confettiCount = 50;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = -10 + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.setProperty('--x-offset', (Math.random() - 0.5) * 200 + 'px');
+                confetti.style.setProperty('--rotation', Math.random() * 360 + 'deg');
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        function restartQuiz() {
+            // Reset current question counter
+            currentQuestion = 0;
+            
+            // Hide result page
+            document.getElementById('result-page').classList.add('animate__fadeOut');
+            
+            setTimeout(() => {
+                // Hide result and quiz pages
+                document.getElementById('result-page').classList.add('hidden');
+                document.getElementById('result-page').classList.remove('animate__fadeOut', 'animate__fadeIn');
+                document.getElementById('quiz-page').classList.add('hidden');
+                
+                // Show welcome page
+                document.getElementById('welcome-page').classList.remove('hidden', 'animate__fadeOut');
+                document.getElementById('welcome-page').classList.add('animate__fadeIn');
+                
+                // Reset all questions - HIDE them all and remove selected states
+                for (let i = 1; i <= totalQuestions; i++) {
+                    const q = document.getElementById('q' + i);
+                    q.classList.add('hidden');
+                    q.classList.remove('slide-out-left', 'slide-in-right');
+                    const options = q.querySelectorAll('.option');
+                    options.forEach(opt => opt.classList.remove('selected'));
+                }
+                
+                // Reset progress bar
+                document.getElementById('progress').style.width = '0%';
+                
+                // Hide next button
+                const nextBtn = document.getElementById('next-btn');
+                nextBtn.classList.add('hidden');
+                nextBtn.classList.remove('visible');
+            }, 500);
+        }
+
+        function generateZodiacPage() {
+            const starsContainer = document.getElementById('starsContainer');
+            starsContainer.innerHTML = '';
+            
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+
+            const zodiacSigns = [
+                { emoji: '♈', name: 'Aries' },
+                { emoji: '♉', name: 'Taurus' },
+                { emoji: '♊', name: 'Gemini' },
+                { emoji: '♋', name: 'Cancer' },
+                { emoji: '♌', name: 'Leo' },
+                { emoji: '♍', name: 'Virgo' },
+                { emoji: '♎', name: 'Libra' },
+                { emoji: '♏', name: 'Scorpio' },
+                { emoji: '♐', name: 'Sagittarius' },
+                { emoji: '♑', name: 'Capricorn' },
+                { emoji: '♒', name: 'Aquarius' },
+                { emoji: '♓', name: 'Pisces' }
+            ];
+
+            const zodiacSignsContainer = document.getElementById('zodiacSigns');
+            zodiacSignsContainer.innerHTML = '';
+
+            const isMobile = window.innerWidth <= 768;
+            const radius = isMobile ? 135 : 300;
+
+            zodiacSigns.forEach((sign, index) => {
+                const angle = (index * 30) - 90;
+                const radian = angle * (Math.PI / 180);
+                
+                const x = radius * Math.cos(radian);
+                const y = radius * Math.sin(radian);
+
+                const signElement = document.createElement('div');
+                signElement.className = 'zodiac-sign';
+                if (sign.name === 'Scorpio') {
+                    signElement.classList.add('scorpio');
+                }
+                signElement.innerHTML = sign.emoji;
+                
+                signElement.style.left = `calc(50% + ${x}px)`;
+                signElement.style.top = `calc(50% + ${y}px)`;
+                
+                zodiacSignsContainer.appendChild(signElement);
+            });
+        }
+
+        // Magic Star Functionality
+        function clickStar() {
+            const star = document.getElementById('magicStar');
+              // فعال‌کردن Context اگر suspend شده باشد
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            // پخش نت از گام
+            playNoteMusicBox(magicScale[starClicks % magicScale.length]);
+            starClicks++;
+            
+            // Grow the star
+            const scale = 1 + (starClicks * 0.3);
+            star.style.transform = `scale(${scale})`;
+            
+            // After 5 clicks, trigger magic transition
+            if (starClicks >= 5) {
+                // اجرای ملودی جادویی و بعد نمایش پرتال
+                playMagicSequenceMusicBox();
+                star.classList.add('growing');
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay-portal';
+                document.body.appendChild(overlay);
+
+                // Create circle
+                const circle = document.createElement('div');
+                circle.className = 'portal-circle';
+                overlay.appendChild(circle);
+
+                // Create star particle
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'star-particle';
+                    const angle = Math.random() * 2 * Math.PI;
+                    const distance = 200 + Math.random() * 200;
+                    particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                    particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                    particle.style.left = '50%';
+                    particle.style.top = '77%';
+                    overlay.appendChild(particle);
+                }
+
+                // Open zodiac page
+                setTimeout(() => {
+                    showZodiacPage();
+                }, 900);
+            }
+        };
+
+        function showZodiacPage() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('zodiacPage').classList.add('active');
+            generateZodiacPage();
+            setTimeout(() => {
+                    startZodiacMusic();
+                }, 1000);
+        }
+
+        function backToMain() {
+            // Hide zodiac page
+            document.getElementById('zodiacPage').classList.remove('active');
+            document.querySelector('.container').style.display = 'block';
+            stopZodiacMusic();
+
+            
+            // Reset star clicks
+            starClicks = 0;
+            const star = document.getElementById('magicStar');
+            star.style.transform = 'scale(1)';
+            star.classList.remove('growing');
+        }
+
+        // گام جادویی C Lydian
+        const magicScale = [
+            523.26, // C
+            587.32, // D
+            659.26, // E
+            739.98, // F#
+            784.00, // G
+            880.00, // A
+            987.76  // B
+        ];
+
+        function playNoteMusicBox(freq, duration = 0.5) {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+
+            // شکل موج مثلث + کمی saw برای حس music box
+            osc.type = 'sine';  // 'triangle' یا 'square' برای تن فلزی‌تر
+            osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+
+            // فیلتر برای حذف فرکانس‌های خیلی بالا و نرم کردن صدا
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(2000, audioContext.currentTime);
+
+            // Envelope برای جلوگیری از نویز قطع شدن
+            const now = audioContext.currentTime;
+            // gain.gain.cancelScheduledValues(now);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);  // attack سریع
+            // gain.gain.setTargetAtTime(0.0, now + duration - 0.05, 0.01); // release نرم
+
+            // اتصال گره‌ها
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioContext.destination);
+
+            osc.start(now);
+            osc.stop(now + duration);
+        }
+
+        function playMagicSequenceMusicBox(callback) {
+            const seq = [magicScale[0], magicScale[3], magicScale[5], magicScale[4], magicScale[6]];
+            seq.forEach((freq, i) => {
+                setTimeout(() => playNoteMusicBox(freq), i * 300);
+            });
+            setTimeout(callback, seq.length * 300 + 200);
+        }
+
+        let zodiacMusic = null;
+
+        function startZodiacMusic() {
+            if (!zodiacMusic) {
+                zodiacMusic = new Audio('Audio/Special.mp3');
+                zodiacMusic.loop = true;
+                zodiacMusic.volume = 1;
+            }
+            zodiacMusic.play().catch(err => {
+                console.log("Autoplay blocked:", err);
+            });
+        }
+
+        function stopZodiacMusic() {
+            if (zodiacMusic) {
+                zodiacMusic.pause();
+                zodiacMusic.currentTime = 0; // برگرداندن به اول آهنگ
+            }
+        }
+        
+    </script>
+</body>
+</html>
