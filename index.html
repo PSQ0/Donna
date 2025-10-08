@@ -1384,11 +1384,9 @@
         // Magic Star Functionality
         function clickStar() {
             const star = document.getElementById('magicStar');
-              // فعال‌کردن Context اگر suspend شده باشد
             if (audioContext.state === 'suspended') {
                 audioContext.resume();
             }
-            // پخش نت از گام
             playNoteMusicBox(magicScale[starClicks % magicScale.length]);
             starClicks++;
             
@@ -1398,7 +1396,6 @@
             
             // After 5 clicks, trigger magic transition
             if (starClicks >= 5) {
-                // اجرای ملودی جادویی و بعد نمایش پرتال
                 playMagicSequenceMusicBox();
                 star.classList.add('growing');
                 const overlay = document.createElement('div');
@@ -1453,7 +1450,7 @@
             star.classList.remove('growing');
         }
 
-        // گام جادویی C Lydian
+        //  C Lydian
         const magicScale = [
             523.26, // C
             587.32, // D
@@ -1468,23 +1465,22 @@
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
             const filter = audioContext.createBiquadFilter();
-
-            // شکل موج مثلث + کمی saw برای حس music box
-            osc.type = 'sine';  // 'triangle' یا 'square' برای تن فلزی‌تر
+            
+            osc.type = 'sine';  
             osc.frequency.setValueAtTime(freq, audioContext.currentTime);
 
-            // فیلتر برای حذف فرکانس‌های خیلی بالا و نرم کردن صدا
+            // Lowpass Filter
             filter.type = 'lowpass';
             filter.frequency.setValueAtTime(2000, audioContext.currentTime);
 
-            // Envelope برای جلوگیری از نویز قطع شدن
+            // Envelope
             const now = audioContext.currentTime;
             // gain.gain.cancelScheduledValues(now);
             gain.gain.setValueAtTime(0.2, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);  // attack سریع
-            // gain.gain.setTargetAtTime(0.0, now + duration - 0.05, 0.01); // release نرم
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);  // attack 
+            // gain.gain.setTargetAtTime(0.0, now + duration - 0.05, 0.01); // release 
 
-            // اتصال گره‌ها
+            
             osc.connect(filter);
             filter.connect(gain);
             gain.connect(audioContext.destination);
@@ -1517,7 +1513,7 @@
         function stopZodiacMusic() {
             if (zodiacMusic) {
                 zodiacMusic.pause();
-                zodiacMusic.currentTime = 0; // برگرداندن به اول آهنگ
+                zodiacMusic.currentTime = 0;
             }
         }
         
