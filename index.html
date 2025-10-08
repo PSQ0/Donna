@@ -36,61 +36,46 @@
             padding: 15px;
             position: relative;
             overflow: hidden;
+            user-select: none;   /* Disable txt selection */
+            -webkit-user-select: none; /* WebKit */
+            -moz-user-select: none;    /*Firefox */
+            -ms-user-select: none;     /*IE/Edge*/
         }
 
         /* Floating Trading Elements */
-        .trading-element {
-            position: absolute;
-            font-size: 45px;
-            opacity: 0.85;
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            filter: drop-shadow(0 5px 25px rgba(255, 107, 157, 0.7));
-            will-change: transform;
-            z-index: 5;
+            z-index: 0;
+            overflow: hidden;
         }
 
-        @media (prefers-reduced-motion: no-preference) {
-            .trading-element {
-                animation: float linear infinite;
+        .particle {
+            position: absolute;
+            font-size: 1.5em;
+            opacity: 0.8;
+            animation: floatParticle 10s linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) translateX(0) ;
+                opacity: 0;
             }
-            
-            @keyframes float {
-                0% {
-                    transform: translateY(100vh) rotate(0deg);
-                }
-                100% {
-                    transform: translateY(-100vh) rotate(180deg);
-                }
+            10% {
+                opacity: 0.8;
             }
-
-            @keyframes floatHorizontal {
-                0% {
-                    transform: translateX(-100vw) rotate(0deg);
-                }
-                100% {
-                    transform: translateX(100vw) rotate(180deg);
-                }
+            90% {
+                opacity: 0.8;
             }
-        }
-
-        @media (max-width: 768px) {
-            .trading-element {
-                animation-duration: 25s !important;
-                opacity: 0.75;
-                font-size: 38px;
+            100% {
+                transform: translateY(-100px) translateX(var(--drift)) ;
+                opacity: 0;
             }
-        }
-
-        .candle-bull {
-            animation: float 20s linear infinite;
-        }
-
-        .candle-bear {
-            animation: float 23s linear infinite;
-        }
-
-        .chart-icon-float {
-            animation: floatHorizontal 25s linear infinite;
         }
 
         .container {
@@ -341,6 +326,9 @@
         }
 
         .result-card {
+            inset: 0;
+            overflow: hidden;
+            z-index: 9999;
             text-align: center;
             padding: 15px 10px;
         }
@@ -613,16 +601,16 @@
             display: inline-block;
             margin: 2rem 0;
             transition: all 0.3s ease;
-            animation: twinkle 2s ease-in-out infinite;
+            animation: super-glow 2s ease-in-out infinite;
             user-select: none;
         }
 
-        @keyframes twinkle {
-            0%, 100% { 
-                text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700;
+        @keyframes super-glow {
+             0%, 100% { 
+                filter: drop-shadow(0 0 10px #ffe600) brightness(1.2);
             }
             50% { 
-                text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ffd700, 0 0 80px #ffd700;
+                filter: drop-shadow(0 0 30px #3f0064) brightness(0.95);
             }
         }
 
@@ -631,10 +619,71 @@
         }
 
         @keyframes grow {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.3) rotate(180deg); }
-            100% { transform: scale(1.5) rotate(360deg); }
+            0% { transform: scale(2.5); }
+            100% { transform: scale(1) rotate(360deg); }
         }
+        
+        /* --  portal */
+
+        .overlay-portal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+        .portal-circle {
+            position: absolute;
+            top: 77%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            margin-left: -100px;
+            margin-top: -100px;
+            border-radius: 50%;
+            /* background: radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,255,255,0.6) 40%, transparent 70%); */
+            background: radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,255,255,0.8) 30%, rgba(255,215,0, 0.5) 60%, transparent 70%);
+            animation: circle-expand 1.5s ease-out forwards;
+            box-shadow: 0 0 30px #ffd700, 0 0 60px #fff, 0 0 100px #fff;
+        }
+
+        @keyframes circle-expand {
+            0% {
+                transform: scale(0.1);
+                opacity: 1;
+            }
+            60% {
+                transform: scale(3);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(8);
+                opacity: 0;
+            }
+        }
+
+        .star-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff, 0 0 20px #ffd700;
+            animation: particle-fly 1.5s ease-out forwards;
+        }
+
+        @keyframes particle-fly {
+            to {
+                transform: translate(var(--tx), var(--ty)) scale(0.5);
+                opacity: 0;
+            }
+        }
+        /* -- end of portal */
 
         .zodiac-container {
             background: linear-gradient(180deg, #0a0e27 0%, #1a1a3e 50%, #2a2a5e 100%);
@@ -653,6 +702,21 @@
 
         .zodiac-container.active {
             display: flex;
+            animation: magicReveal 1s ease-out;
+        }
+
+        @keyframes magicReveal {
+            0% { 
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .zodiac-page {
@@ -766,7 +830,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0.5));
             transition: filter 0.3s ease, transform 0.3s ease !important;
             animation: counterRotate 60s linear infinite;
         }
@@ -787,20 +851,19 @@
 
         .zodiac-sign.scorpio {
             filter: drop-shadow(0 0 20px rgba(255, 105, 180, 1));
-            animation: scorpioGlow 2s ease-in-out infinite, counterRotate 60s linear infinite;
+            animation: scorpioShine 2s ease-in-out infinite, counterRotate 60s linear infinite;
         }
 
-        @keyframes scorpioGlow {
-            0%, 100% {
-                filter: drop-shadow(0 0 20px rgba(255, 105, 180, 1));
+        @keyframes scorpioShine {
+            0%, 100% { 
+                filter: drop-shadow(0 0 10px #ff0080) brightness(1);
             }
-            50% {
-                filter: drop-shadow(0 0 40px rgba(138, 43, 226, 1));
+            30% { 
+                filter: drop-shadow(0 0 30px #ffffff) brightness(1.5);
             }
         }
 
         .back-btn {
-            background: linear-gradient(135deg, #6a5acd, #9370db);
             color: white;
             border: none;
             padding: 15px 40px;
@@ -809,16 +872,25 @@
             cursor: pointer;
             display: block;
             margin: 40px auto 0;
-            box-shadow: 0 8px 20px rgba(106, 90, 205, 0.4);
             transition: all 0.3s ease;
             font-weight: bold;
             z-index: 10;
             position: relative;
+
+            box-shadow: 
+                0 8px 32px rgba(255, 107, 157, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(5px) saturate(140%);
+            -webkit-backdrop-filter: blur(5px) saturate(140%);
+            border-color: rgba(255, 255, 255, 0.45);
         }
 
         .back-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(106, 90, 205, 0.6);
+            box-shadow: 
+                0 12px 30px rgba(106, 90, 205, 0.6),
+                inset 0 1px 2px rgba(255, 255, 255, 0.4);
         }
 
         @media (max-width: 768px) {
@@ -858,24 +930,12 @@
             .magic-star {
                 font-size: 2em;
             }
-
-            /* .chart {
-                height: 150px;
-            }
-
-            .candle {
-                width: 20px;
-            }
-
-            .particle {
-                font-size: 1em;
-            } */
         }
     </style>
 </head>
 <body>
     <!-- Floating Trading Elements Background -->
-    <div id="trading-elements"></div>
+    <div class="particles-container" id="particlesContainer"></div>
 
     <div class="container">
         <div class="content">
@@ -1012,7 +1072,7 @@
                 </p>
 
                 <button class="btn" onclick="restartQuiz()">Trade Again 🔄</button>
-                <div class="magic-star" id="magicStar" onclick="clickStar()">🌟</div>
+                <div class="magic-star" id="magicStar" onclick="clickStar()">✨</div>
             </div>
         </div>
     </div>
@@ -1021,7 +1081,7 @@
         <div class="stars-background" id="starsContainer"></div>
         
         <div class="zodiac-page">
-            <h1 class="zodiac-title">✨ Your Celestial Journey ✨</h1>
+            <!-- <h1 class="zodiac-title">✨ Your Celestial Journey ✨</h1> -->
             
             <div class="zodiac-circle">
                 <div class="sun"></div>
@@ -1044,6 +1104,10 @@
         // Detect if device is mobile for performance optimization
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isLowPerformance = isMobile || navigator.hardwareConcurrency < 4;
+
+        document.addEventListener('contextmenu', function(event) {
+        event.preventDefault(); /* Disable right click*/
+    });
 
         // Play celebration sound
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1083,48 +1147,47 @@
         }
 
         // Create floating trading elements (reduced for mobile)
-        function createFloatingElements() {
-            const elementCount = isLowPerformance ? 14 : 18;
-            const elements = [
-                { emoji: '📊', type: 'chart' },
-                { emoji: '📈', type: 'bull' },
-                { emoji: '📉', type: 'bear' },
-                { emoji: '💹', type: 'chart' },
-                { emoji: '🐂', type: 'bull' },
-                { emoji: '💰', type: 'chart' },
-                { emoji: '🚀', type: 'bull' },
-                { emoji: '💎', type: 'chart' },
-                { emoji: '♏', type: 'bull' },
-                { emoji: '💸', type: 'bear' },
-                { emoji: '🎯', type: 'chart' },
-                { emoji: '📱', type: 'bull' },
-                { emoji: '💻', type: 'chart' },
-                { emoji: '🐻', type: 'bull' },
-                { emoji: '☄️', type: 'chart' },
-                { emoji: '💵', type: 'bear' },
-                { emoji: '⭐', type: 'chart' },
-                { emoji: '🕯️', type: 'bull' }
-            ];
+        function generateParticles() {
+            const container = document.getElementById('particlesContainer');
+            const particlesBase = ['📉','💰', '📈', '💎', '🚀', '🕯️', '💸', '♏', '✨', '📊', '🎯','🐻','🐂','📱','💻','💵'];
 
-            const container = document.getElementById('trading-elements');
-            
-            for (let i = 0; i < elementCount; i++) {
-                const el = elements[i % elements.length];
-                const div = document.createElement('div');
-                div.className = `trading-element ${el.type === 'bull' ? 'candle-bull' : el.type === 'bear' ? 'candle-bear' : 'chart-icon-float'}`;
-                div.innerHTML = el.emoji;
-                div.style.left = Math.random() * 100 + '%';
-                div.style.top = Math.random() * 100 + 'vh';
-                div.style.animationDelay = Math.random() * 5 + 's';
-                div.style.animationDuration = (20 + Math.random() * 10) + 's';
-                container.appendChild(div);
-            }
+            setInterval(() => {
+                // locate exist symbols on page
+                const existingSymbols = new Set(
+                    Array.from(container.querySelectorAll('.particle'))
+                        .map(p => p.textContent)
+                );
+
+                // Fliter to keep new symbols
+                const availableSymbols = particlesBase.filter(sym => !existingSymbols.has(sym));
+
+                // If all symbols are in page then let choose all of them
+                const choicePool = availableSymbols.length ? availableSymbols : particlesBase;
+
+                // Chose final symbol
+                const symbol = choicePool[Math.floor(Math.random() * choicePool.length)];
+
+                // Create particle
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.innerHTML = symbol;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.setProperty('--drift', (Math.random() * 200 - 100) + 'px');
+                particle.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                particle.style.fontSize = (Math.random() * 1 + 1) + 'em';
+                
+                container.appendChild(particle);
+
+                // Delete after 13s
+                setTimeout(() => {
+                    particle.remove();
+                }, 13000);
+            }, 800);
         }
 
-        // Initialize floating elements on load
-        window.onload = function() {
-            createFloatingElements();
-        };
+            window.addEventListener('load', () => {
+            generateParticles();
+        });
 
         function startQuiz() {
             document.getElementById('welcome-page').classList.add('animate__fadeOut');
@@ -1321,6 +1384,12 @@
         // Magic Star Functionality
         function clickStar() {
             const star = document.getElementById('magicStar');
+              // فعال‌کردن Context اگر suspend شده باشد
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            // پخش نت از گام
+            playNoteMusicBox(magicScale[starClicks % magicScale.length]);
             starClicks++;
             
             // Grow the star
@@ -1329,23 +1398,53 @@
             
             // After 5 clicks, trigger magic transition
             if (starClicks >= 5) {
+                // اجرای ملودی جادویی و بعد نمایش پرتال
+                playMagicSequenceMusicBox();
                 star.classList.add('growing');
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay-portal';
+                document.body.appendChild(overlay);
+
+                // Create circle
+                const circle = document.createElement('div');
+                circle.className = 'portal-circle';
+                overlay.appendChild(circle);
+
+                // Create star particle
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'star-particle';
+                    const angle = Math.random() * 2 * Math.PI;
+                    const distance = 200 + Math.random() * 200;
+                    particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                    particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                    particle.style.left = '50%';
+                    particle.style.top = '77%';
+                    overlay.appendChild(particle);
+                }
+
+                // Open zodiac page
                 setTimeout(() => {
                     showZodiacPage();
-                }, 500);
+                }, 900);
             }
-        }
+        };
 
         function showZodiacPage() {
             document.querySelector('.container').style.display = 'none';
             document.getElementById('zodiacPage').classList.add('active');
             generateZodiacPage();
+            setTimeout(() => {
+                    startZodiacMusic();
+                }, 1000);
         }
 
         function backToMain() {
             // Hide zodiac page
             document.getElementById('zodiacPage').classList.remove('active');
             document.querySelector('.container').style.display = 'block';
+            stopZodiacMusic();
+
             
             // Reset star clicks
             starClicks = 0;
@@ -1353,6 +1452,75 @@
             star.style.transform = 'scale(1)';
             star.classList.remove('growing');
         }
+
+        // گام جادویی C Lydian
+        const magicScale = [
+            523.26, // C
+            587.32, // D
+            659.26, // E
+            739.98, // F#
+            784.00, // G
+            880.00, // A
+            987.76  // B
+        ];
+
+        function playNoteMusicBox(freq, duration = 0.5) {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+
+            // شکل موج مثلث + کمی saw برای حس music box
+            osc.type = 'sine';  // 'triangle' یا 'square' برای تن فلزی‌تر
+            osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+
+            // فیلتر برای حذف فرکانس‌های خیلی بالا و نرم کردن صدا
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(2000, audioContext.currentTime);
+
+            // Envelope برای جلوگیری از نویز قطع شدن
+            const now = audioContext.currentTime;
+            // gain.gain.cancelScheduledValues(now);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);  // attack سریع
+            // gain.gain.setTargetAtTime(0.0, now + duration - 0.05, 0.01); // release نرم
+
+            // اتصال گره‌ها
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioContext.destination);
+
+            osc.start(now);
+            osc.stop(now + duration);
+        }
+
+        function playMagicSequenceMusicBox(callback) {
+            const seq = [magicScale[0], magicScale[3], magicScale[5], magicScale[4], magicScale[6]];
+            seq.forEach((freq, i) => {
+                setTimeout(() => playNoteMusicBox(freq), i * 300);
+            });
+            setTimeout(callback, seq.length * 300 + 200);
+        }
+
+        let zodiacMusic = null;
+
+        function startZodiacMusic() {
+            if (!zodiacMusic) {
+                zodiacMusic = new Audio('Audio/Special.mp3');
+                zodiacMusic.loop = true;
+                zodiacMusic.volume = 1;
+            }
+            zodiacMusic.play().catch(err => {
+                console.log("Autoplay blocked:", err);
+            });
+        }
+
+        function stopZodiacMusic() {
+            if (zodiacMusic) {
+                zodiacMusic.pause();
+                zodiacMusic.currentTime = 0; // برگرداندن به اول آهنگ
+            }
+        }
+        
     </script>
 </body>
 </html>
