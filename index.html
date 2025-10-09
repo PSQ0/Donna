@@ -59,6 +59,7 @@
             font-size: 1.5em;
             opacity: 0.8;
             animation: floatParticle 10s linear infinite;
+            will-change: transform, opacity;
         }
 
         @keyframes floatParticle {
@@ -646,7 +647,6 @@
             margin-left: -100px;
             margin-top: -100px;
             border-radius: 50%;
-            /* background: radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,255,255,0.6) 40%, transparent 70%); */
             background: radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,255,255,0.8) 30%, rgba(255,215,0, 0.5) 60%, transparent 70%);
             animation: circle-expand 1.5s ease-out forwards;
             box-shadow: 0 0 30px #ffd700, 0 0 60px #fff, 0 0 100px #fff;
@@ -726,38 +726,31 @@
             padding: 40px 20px;
         }
 
-        .zodiac-title {
-            color: #fff;
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 40px;
-            text-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
-            animation: glow 2s ease-in-out infinite;
-        }
-
-        @keyframes glow {
-            0%, 100% {
-                text-shadow: 0 0 20px rgba(255, 105, 180, 0.8), 0 0 40px rgba(255, 105, 180, 0.5);
-            }
-            50% {
-                text-shadow: 0 0 30px rgba(255, 105, 180, 1), 0 0 60px rgba(255, 105, 180, 0.7);
-            }
-        }
-
         .stars-background {
             position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
+            background: radial-gradient(circle at 50% 45%, #160033 10%, #0a0020 80%);
             z-index: 0;
+        }
+        .stars-background::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(160,100,255,0.12) 0%, transparent 80%);
+            animation: backgroundPulse 20s ease-in-out infinite;
+            will-change: opacity;
+        }
+
+            @keyframes backgroundPulse {
+            0%,100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
         }
 
         .star {
             position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
             border-radius: 50%;
             animation: starTwinkle 3s ease-in-out infinite;
         }
@@ -784,25 +777,70 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, #ffd700 0%, #ffed4e 50%, #ff8c00 100%);
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.8),
-                        0 0 80px rgba(255, 215, 0, 0.5),
-                        0 0 120px rgba(255, 140, 0, 0.3);
-            animation: sunPulse 3s ease-in-out infinite;
+            background: radial-gradient(circle at 30% 30%, #fff4b3 0%, #ffd84d 50%, #ffb515 70%, #ff9e00 100%);
+            box-shadow:
+                0 0 60px rgba(255, 220, 120, 0.8),
+                0 0 180px rgba(190, 100, 255, 0.35),
+                inset 0 0 25px rgba(255, 250, 190, 0.6);
+            overflow: visible;
+            animation: sunPulseMobile 4s ease-in-out infinite;
+            will-change: transform, opacity;
             z-index: 2;
         }
 
-        @keyframes sunPulse {
-            0%, 100% {
-                transform: translate(-50%, -50%) scale(1);
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.1);
-            }
+        @keyframes sunPulseMobile {
+        0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.95; }
+        50% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
         }
+
+        .sun::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 200px;
+                height: 200px;
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(255,210,100,0.4) 0%, transparent 70%);
+                animation: glowFade 5s ease-in-out infinite;
+                will-change: opacity, transform;
+            }
+
+            @keyframes glowFade {
+                0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+                50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.12); }
+        }
+
+        .sun::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 230px;
+            height: 230px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(180, 100, 255, 0.25) 0%, rgba(140, 80, 255, 0.15) 70%, transparent 100%);
+            box-shadow: 0 0 80px rgba(180, 90, 255, 0.4);
+            animation: haloPulse 6s ease-in-out infinite;
+            will-change: transform, opacity;
+        }
+
+
+        @keyframes haloPulse {
+            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+          .sun, .sun::before, .sun::after {
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+        }
+
 
         .zodiac-signs {
             position: absolute;
@@ -811,6 +849,7 @@
             top: 0;
             left: 0;
             animation: rotateZodiac 60s linear infinite;
+            will-change: transform;
         }
 
         @keyframes rotateZodiac {
@@ -833,6 +872,8 @@
             filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0.5));
             transition: filter 0.3s ease, transform 0.3s ease !important;
             animation: counterRotate 60s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(251, 247, 255, 0.4));
+            will-change: transform;
         }
 
         @keyframes counterRotate {
@@ -931,6 +972,351 @@
                 font-size: 2em;
             }
         }
+
+        /* Dead Cosmos */
+        .dead-cosmos-container {
+            background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 50%, #0a0a0a 100%);
+            min-height: 100vh;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dead-cosmos-container.active {
+            display: flex;
+        }
+
+        .dead-cosmos-page {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            padding: 40px 20px;
+        }
+
+        .dead-stars-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .dead-star {
+            position: absolute;
+            background: #333;
+            border-radius: 50%;
+            animation: deadStarTwinkle 5s ease-in-out infinite;
+        }
+
+        @keyframes deadStarTwinkle {
+            0%, 100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .dead-cosmos-circle {
+            position: relative;
+            margin: 0 auto;
+            width: min(75vw, 75vh);
+            height: min(75vw, 75vh);
+        }
+
+        .dead-sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(15vw, 15vh);
+            height: min(15vw, 15vh);
+            background: radial-gradient(circle, #1a1a1a 0%, #0d0d0d 50%, #000000 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 min(3vw, 3vh) rgba(0, 0, 0, 0.9),
+                        inset 0 0 min(4vw, 4vh) rgba(80, 80, 80, 0.2);
+            animation: deadSunPulse 4s ease-in-out infinite;
+            z-index: 2;
+            opacity: 0.6;
+        }
+
+        @keyframes deadSunPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 min(3vw, 3vh) rgba(0, 0, 0, 0.9),
+                           inset 0 0 min(4vw, 4vh) rgba(80, 80, 80, 0.2);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(0.95);
+                box-shadow: 0 0 min(2vw, 2vh) rgba(0, 0, 0, 0.95),
+                           inset 0 0 min(5vw, 5vh) rgba(60, 60, 60, 0.3);
+            }
+        }
+
+        .dead-zodiac-signs {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .dead-zodiac-sign {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: min(6vw, 6vh);
+            filter: grayscale(100%) brightness(0.4);
+            opacity: 0.5;
+            animation: deadFloat 8s ease-in-out infinite;
+            transition: all 0.5s ease;
+        }
+
+        .dead-zodiac-sign:nth-child(1) {
+            left: 15%;
+            top: 10%;
+            --float-x-1: -15px;
+            --float-y-1: 10px;
+            --float-x-2: 20px;
+            --float-y-2: -15px;
+            --float-x-3: -10px;
+            --float-y-3: 5px;
+            --rotate-1: -15deg;
+            --rotate-2: 20deg;
+            --rotate-3: -10deg;
+            animation-delay: 0s;
+        }
+
+        .dead-zodiac-sign:nth-child(2) {
+            left: 70%;
+            top: 15%;
+            --float-x-1: 18px;
+            --float-y-1: -12px;
+            --float-x-2: -15px;
+            --float-y-2: 18px;
+            --float-x-3: 12px;
+            --float-y-3: -8px;
+            --rotate-1: 18deg;
+            --rotate-2: -15deg;
+            --rotate-3: 12deg;
+            animation-delay: 0.5s;
+        }
+
+        .dead-zodiac-sign:nth-child(3) {
+            left: 5%;
+            top: 40%;
+            --float-x-1: -20px;
+            --float-y-1: 15px;
+            --float-x-2: 15px;
+            --float-y-2: -20px;
+            --float-x-3: -12px;
+            --float-y-3: 10px;
+            --rotate-1: -20deg;
+            --rotate-2: 15deg;
+            --rotate-3: -12deg;
+            animation-delay: 1s;
+        }
+
+        .dead-zodiac-sign:nth-child(4) {
+            left: 85%;
+            top: 45%;
+            --float-x-1: 12px;
+            --float-y-1: -18px;
+            --float-x-2: -18px;
+            --float-y-2: 12px;
+            --float-x-3: 15px;
+            --float-y-3: -10px;
+            --rotate-1: 12deg;
+            --rotate-2: -18deg;
+            --rotate-3: 15deg;
+            animation-delay: 1.5s;
+        }
+
+        .dead-zodiac-sign:nth-child(5) {
+            left: 10%;
+            top: 75%;
+            --float-x-1: -18px;
+            --float-y-1: 10px;
+            --float-x-2: 20px;
+            --float-y-2: -18px;
+            --float-x-3: -15px;
+            --float-y-3: 12px;
+            --rotate-1: -18deg;
+            --rotate-2: 20deg;
+            --rotate-3: -15deg;
+            animation-delay: 2s;
+        }
+
+        .dead-zodiac-sign:nth-child(6) {
+            left: 75%;
+            top: 80%;
+            --float-x-1: 15px;
+            --float-y-1: -10px;
+            --float-x-2: -12px;
+            --float-y-2: 15px;
+            --float-x-3: 18px;
+            --float-y-3: -12px;
+            --rotate-1: 15deg;
+            --rotate-2: -12deg;
+            --rotate-3: 18deg;
+            animation-delay: 2.5s;
+        }
+
+        .dead-zodiac-sign:nth-child(7) {
+            left: 40%;
+            top: 5%;
+            --float-x-1: -12px;
+            --float-y-1: 18px;
+            --float-x-2: 15px;
+            --float-y-2: -12px;
+            --float-x-3: -18px;
+            --float-y-3: 15px;
+            --rotate-1: -12deg;
+            --rotate-2: 15deg;
+            --rotate-3: -18deg;
+            animation-delay: 0.3s;
+        }
+
+        .dead-zodiac-sign:nth-child(8) {
+            left: 50%;
+            top: 90%;
+            --float-x-1: 20px;
+            --float-y-1: -15px;
+            --float-x-2: -18px;
+            --float-y-2: 20px;
+            --float-x-3: 12px;
+            --float-y-3: -15px;
+            --rotate-1: 20deg;
+            --rotate-2: -18deg;
+            --rotate-3: 12deg;
+            animation-delay: 0.8s;
+        }
+
+        .dead-zodiac-sign:nth-child(9) {
+            left: 25%;
+            top: 30%;
+            --float-x-1: -15px;
+            --float-y-1: 12px;
+            --float-x-2: 18px;
+            --float-y-2: -15px;
+            --float-x-3: -20px;
+            --float-y-3: 18px;
+            --rotate-1: -15deg;
+            --rotate-2: 18deg;
+            --rotate-3: -20deg;
+            animation-delay: 1.3s;
+        }
+
+        .dead-zodiac-sign:nth-child(10) {
+            left: 60%;
+            top: 35%;
+            --float-x-1: 18px;
+            --float-y-1: -20px;
+            --float-x-2: -15px;
+            --float-y-2: 18px;
+            --float-x-3: 20px;
+            --float-y-3: -12px;
+            --rotate-1: 18deg;
+            --rotate-2: -15deg;
+            --rotate-3: 20deg;
+            animation-delay: 1.8s;
+        }
+
+        .dead-zodiac-sign:nth-child(11) {
+            left: 30%;
+            top: 65%;
+            --float-x-1: -20px;
+            --float-y-1: 15px;
+            --float-x-2: 12px;
+            --float-y-2: -20px;
+            --float-x-3: -15px;
+            --float-y-3: 12px;
+            --rotate-1: -20deg;
+            --rotate-2: 12deg;
+            --rotate-3: -15deg;
+            animation-delay: 2.3s;
+        }
+
+        .dead-zodiac-sign:nth-child(12) {
+            left: 65%;
+            top: 60%;
+            --float-x-1: 15px;
+            --float-y-1: -18px;
+            --float-x-2: -20px;
+            --float-y-2: 15px;
+            --float-x-3: 18px;
+            --float-y-3: -15px;
+            --rotate-1: 15deg;
+            --rotate-2: -20deg;
+            --rotate-3: 18deg;
+            animation-delay: 2.8s;
+        }
+
+        @keyframes deadFloat {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(var(--float-x-1), var(--float-y-1)) rotate(var(--rotate-1));
+            }
+            50% {
+                transform: translate(var(--float-x-2), var(--float-y-2)) rotate(var(--rotate-2));
+            }
+            75% {
+                transform: translate(var(--float-x-3), var(--float-y-3)) rotate(var(--rotate-3));
+            }
+        }
+
+        .dead-zodiac-sign:hover {
+            filter: grayscale(100%) brightness(0.6);
+            opacity: 0.7;
+            transform: scale(1.1) !important;
+        }
+
+        .dead-back-btn {
+            background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
+            color: #9b9b9b;
+            border: 2px solid #444;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 40px auto 0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            z-index: 10;
+            position: relative;
+        }
+
+        .dead-back-btn:hover {
+            background: linear-gradient(135deg, #4a4a4a, #3a3a3a);
+            color: #c0c0c0;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+        }
+
+         @media (max-width: 768px) {
+            .dead-cosmos-title {
+                font-size: 1.5em;
+                margin-bottom: 20px;
+            }
+
+            .dead-cosmos-page {
+                padding: 20px 10px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -1093,6 +1479,34 @@
             </p>
 
             <button class="back-btn" onclick="backToMain()">Return to Earth 🌍</button>
+        </div>
+    </div>
+
+     <!-- Dead Cosmos -->
+    <div class="dead-cosmos-container" id="deadCosmosPage">
+        <div class="dead-stars-bg" id="deadStarsContainer"></div>
+        <div class="dead-cosmos-page">
+            <div class="dead-cosmos-circle">
+                <div class="dead-sun"></div>
+                <div class="dead-zodiac-signs">
+                    <div class="dead-zodiac-sign">♈</div>
+                    <div class="dead-zodiac-sign">♉</div>
+                    <div class="dead-zodiac-sign">♊</div>
+                    <div class="dead-zodiac-sign">♋</div>
+                    <div class="dead-zodiac-sign">♌</div>
+                    <div class="dead-zodiac-sign">♍</div>
+                    <div class="dead-zodiac-sign">♎</div>
+                    <div class="dead-zodiac-sign">♏</div>
+                    <div class="dead-zodiac-sign">♐</div>
+                    <div class="dead-zodiac-sign">♑</div>
+                    <div class="dead-zodiac-sign">♒</div>
+                    <div class="dead-zodiac-sign">♓</div>
+                </div>
+            </div>
+            <p style="color: #575757; text-align: center; font-size: 1.2em; margin-top: 30px; opacity: 0.9;">
+                The stars have faded... The universe stands still... All is silent, because today is not a special day.
+            </p>
+            <button class="dead-back-btn" onclick="backToMain()">Escape the Void 🌑</button>
         </div>
     </div>
 
@@ -1329,13 +1743,40 @@
         function generateZodiacPage() {
             const starsContainer = document.getElementById('starsContainer');
             starsContainer.innerHTML = '';
-            
+
             for (let i = 0; i < 150; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
+
+                // Position
                 star.style.left = Math.random() * 100 + '%';
                 star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 3 + 's';
+
+                // Size between 1 to 4px
+                const size = (Math.random() * 3) + 1; 
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+
+                // Glow
+                const colors = [
+                    'rgba(255,255,255,1)', 
+                    'rgba(255,230,180,1)', 
+                    'rgba(180,220,255,1)'
+                ];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                star.style.backgroundColor = color;
+                star.style.boxShadow = `0 0 ${size * 3}px ${color}`;
+
+                // opacity
+                star.style.opacity = (Math.random() * 0.4 + 0.6).toFixed(2);
+
+                // blur 
+                const blur = Math.random() > 0.5 ? '1px' : '0px';
+                star.style.filter = `blur(${blur})`;
+
+                // delay blinking
+                star.style.animationDelay = (Math.random() * 2) + 's';
+
                 starsContainer.appendChild(star);
             }
 
@@ -1384,11 +1825,10 @@
         // Magic Star Functionality
         function clickStar() {
             const star = document.getElementById('magicStar');
-              // فعال‌کردن Context اگر suspend شده باشد
             if (audioContext.state === 'suspended') {
                 audioContext.resume();
             }
-            // پخش نت از گام
+            // Play note
             playNoteMusicBox(magicScale[starClicks % magicScale.length]);
             starClicks++;
             
@@ -1399,7 +1839,7 @@
             // After 5 clicks, trigger magic transition
             if (starClicks >= 5) {
                 startZodiacMusic();
-                // اجرای ملودی جادویی و بعد نمایش پرتال
+                // Play note and run portal
                 playMagicSequenceMusicBox();
                 star.classList.add('growing');
                 const overlay = document.createElement('div');
@@ -1426,7 +1866,11 @@
 
                 // Open zodiac page
                 setTimeout(() => {
+                     if (isBirthdayToday()) {
                     showZodiacPage();
+                     } else {
+                    deadZodiacPage();
+                     }
                 }, 900);
             }
         };
@@ -1443,7 +1887,9 @@
             document.querySelector('.container').style.display = 'block';
             stopZodiacMusic();
 
-            
+            // Hide fallen cosmos page
+            document.getElementById('deadCosmosPage').classList.remove('active');
+  
             // Reset star clicks
             starClicks = 0;
             const star = document.getElementById('magicStar');
@@ -1451,7 +1897,7 @@
             star.classList.remove('growing');
         }
 
-        // گام جادویی C Lydian
+        // C Lydian
         const magicScale = [
             523.26, // C
             587.32, // D
@@ -1467,22 +1913,20 @@
             const gain = audioContext.createGain();
             const filter = audioContext.createBiquadFilter();
 
-            // شکل موج مثلث + کمی saw برای حس music box
-            osc.type = 'sine';  // 'triangle' یا 'square' برای تن فلزی‌تر
+            // music box
+            osc.type = 'sine';  
             osc.frequency.setValueAtTime(freq, audioContext.currentTime);
 
-            // فیلتر برای حذف فرکانس‌های خیلی بالا و نرم کردن صدا
+            // Lowpass filter
             filter.type = 'lowpass';
             filter.frequency.setValueAtTime(2000, audioContext.currentTime);
 
-            // Envelope برای جلوگیری از نویز قطع شدن
+            // Envelope
             const now = audioContext.currentTime;
             // gain.gain.cancelScheduledValues(now);
             gain.gain.setValueAtTime(0.2, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);  // attack سریع
-            // gain.gain.setTargetAtTime(0.0, now + duration - 0.05, 0.01); // release نرم
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);  // attack
 
-            // اتصال گره‌ها
             osc.connect(filter);
             filter.connect(gain);
             gain.connect(audioContext.destination);
@@ -1502,14 +1946,13 @@
         let zodiacMusic = null;
 
         function startZodiacMusic() {
+            if (isBirthdayToday()) {
             if (!zodiacMusic) {
                 zodiacMusic = new Audio('Audio/Special.mp3');
                 zodiacMusic.loop = true;
                 zodiacMusic.volume = 1;
             }
-            // zodiacMusic.play().catch(err => {
-            //     console.log("Autoplay blocked:", err);
-            // });
+        }
             setTimeout(() => {
                 zodiacMusic.play().catch(err => console.log(err));
             }, 1900);
@@ -1518,10 +1961,59 @@
         function stopZodiacMusic() {
             if (zodiacMusic) {
                 zodiacMusic.pause();
-                zodiacMusic.currentTime = 0; // برگرداندن به اول آهنگ
+                zodiacMusic.currentTime = 0;
             }
         }
+
+        // _______________________________Dead cosmos_______________________________________________________
+
+        function generateDeadStars() {
+            const starsContainer = document.getElementById('deadStarsContainer');
+            starsContainer.innerHTML = '';
+
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'dead-star';
+
+                // Random pos
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+
+                // Size 1 to 3px
+                const size = (Math.random() * 2) + 1; 
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+
+                // Random opacity
+                star.style.opacity = (Math.random() * 0.2 + 0.15).toFixed(2);
+
+                // Random blur
+                const blur = Math.random() > 0.7 ? '1px' : '0px';
+                star.style.filter = `blur(${blur})`;
+
+                // Delay blinking
+                star.style.animationDelay = Math.random() * 5 + 's';
+
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function deadZodiacPage(){
+            document.getElementById('deadCosmosPage').classList.add('active');
+            generateDeadStars();
+        }
+
+        // Check Birthday
         
+        const birthday = { day: 10, month: 10 }; // 10 = November
+
+        function isBirthdayToday() {
+            const today = new Date();
+            const day = today.getDate();
+            const month = today.getMonth() + 1; // getMonth 
+            return day === birthday.day && month === birthday.month;
+        }
+
     </script>
 </body>
 </html>
