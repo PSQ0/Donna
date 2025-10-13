@@ -22,22 +22,6 @@ This app turns a classic birthday greeting into a playful trading challenge, com
 
 ---
 
-## 📂 Project Structure
-Since the app is self-contained in one file:
-📦 birthday-trading-challenge
-
-├─ index.html
-
-├─ README.md
-
-└─ assets/
-
-├─ preview-quiz.png
-
-├─ preview-result.png
-
----
-
 ## 🚀 How to Run
 ### 1. Local Run
 Simply download or clone the repository and open `index.html` in any web browser.
