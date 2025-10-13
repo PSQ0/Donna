@@ -1,6 +1,6 @@
 {
-  "name": "Birthday Trading Challenge",
-  "short_name": "BirthdayTrading",
+  "name": "Madonna",
+  "short_name": "Madonna",
   "start_url": "/Donna/index.html",
   "scope": "/Donna/",
   "display": "standalone",
@@ -17,3 +17,4 @@
     { "src": "icons/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
+
