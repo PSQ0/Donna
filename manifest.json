@@ -5,7 +5,7 @@
   "scope": "/Donna/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffe9f0",
+  "theme_color": "#fdfbfb",
   "orientation": "portrait",
   "description": "Celebrate your birthday with the ultimate trading challenge! A cosmic experience built for Scorpio energy.",
   "icons": [
@@ -17,4 +17,5 @@
     { "src": "icons/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
+
 
