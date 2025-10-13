@@ -1,8 +1,6 @@
 const CACHE_NAME = 'birthday-trading-v1';
 const urlsToCache = [
   '/Donna/index.html',
-  '/Donna/styles.css',
-  '/Donna/script.js',
   '/Donna/icons/icon-192x192.png',
   '/Donna/icons/icon-512x512.png'
 ];
@@ -28,3 +26,4 @@ self.addEventListener('fetch', event => {
     caches.match(event.request).then(response => response || fetch(event.request))
   );
 });
+
