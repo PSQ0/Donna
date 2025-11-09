@@ -1871,15 +1871,17 @@
                 audioContext.resume();
             }
             // Play note
-            playNoteMusicBox(magicScale[starClicks % magicScale.length]);
-            starClicks++;
+            if (starClicks <= 5){
+                playNoteMusicBox(magicScale[starClicks % magicScale.length]);
+                starClicks++;
+            }
             
             // Grow the star
             const scale = 1 + (starClicks * 0.2);
             star.style.transform = `scale(${scale})`;
             
             // After 5 clicks, trigger magic transition
-            if (starClicks >= 5) {
+            if (starClicks == 5) {
                 startZodiacMusic();
                 // Play note and run portal
                 playMagicSequenceMusicBox();
@@ -2053,7 +2055,7 @@
 
         // Check Birthday
         
-        const birthday = { day: 19, month: 11 }; // 11 = November
+        const birthday = { day: 9, month: 11 }; // 11 = November
 
         function isBirthdayToday() {
             const today = new Date();
